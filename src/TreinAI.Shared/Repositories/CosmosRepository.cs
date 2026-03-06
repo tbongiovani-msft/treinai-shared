@@ -103,7 +103,8 @@ public class CosmosRepository<T> : IRepository<T> where T : BaseEntity
         var response = await _container.CreateItemAsync(
             entity, new PartitionKey(entity.TenantId), cancellationToken: ct);
         _logger.LogDebug("Create consumed {RU} RU", response.RequestCharge);
-        return response.Resource;
+        // response.Resource is null when EnableContentResponseOnWrite = false
+        return response.Resource ?? entity;
     }
 
     public async Task<T> UpdateAsync(T entity, CancellationToken ct = default)
@@ -112,7 +113,8 @@ public class CosmosRepository<T> : IRepository<T> where T : BaseEntity
         var response = await _container.ReplaceItemAsync(
             entity, entity.Id, new PartitionKey(entity.TenantId), cancellationToken: ct);
         _logger.LogDebug("Update consumed {RU} RU", response.RequestCharge);
-        return response.Resource;
+        // response.Resource is null when EnableContentResponseOnWrite = false
+        return response.Resource ?? entity;
     }
 
     public async Task DeleteAsync(string id, string tenantId, CancellationToken ct = default)
