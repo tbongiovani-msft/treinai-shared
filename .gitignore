@@ -1,0 +1,17 @@
+## .NET build artifacts
+bin/
+obj/
+
+## User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+## NuGet Packages
+*.nupkg
+*.snupkg
+
+## Local settings
+local.settings.json

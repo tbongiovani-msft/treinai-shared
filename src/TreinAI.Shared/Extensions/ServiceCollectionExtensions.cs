@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TreinAI.Shared.Middleware;
 using TreinAI.Shared.Repositories;
+using TreinAI.Shared.Services;
 
 namespace TreinAI.Shared.Extensions;
 
@@ -87,6 +88,16 @@ public static class ServiceCollectionExtensions
     {
         services.AddCosmosDb(cosmosEndpoint, databaseName);
         services.AddTenantContext();
+        return services;
+    }
+
+    /// <summary>
+    /// Registers a logging-based email service for development.
+    /// Replace with ACS implementation when Azure Communication Services infra is ready.
+    /// </summary>
+    public static IServiceCollection AddEmailService(this IServiceCollection services)
+    {
+        services.AddSingleton<IEmailService, LoggingEmailService>();
         return services;
     }
 }
