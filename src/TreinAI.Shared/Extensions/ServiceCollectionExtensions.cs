@@ -92,6 +92,16 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
+    /// Registers INotificationService → NotificationService backed by the notificacoes container.
+    /// Call AddRepository&lt;Notificacao&gt;("notificacoes") before this.
+    /// </summary>
+    public static IServiceCollection AddNotificationService(this IServiceCollection services)
+    {
+        services.AddScoped<INotificationService, NotificationService>();
+        return services;
+    }
+
+    /// <summary>
     /// Registers a logging-based email service for development.
     /// Replace with ACS implementation when Azure Communication Services infra is ready.
     /// </summary>
