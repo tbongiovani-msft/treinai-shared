@@ -102,12 +102,28 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Registers a logging-based email service for development.
-    /// Replace with ACS implementation when Azure Communication Services infra is ready.
+    /// Registers the email service.
+    /// If ACS__ConnectionString is set, uses Azure Communication Services for real email sending.
+    /// Otherwise, falls back to LoggingEmailService for development/testing.
     /// </summary>
     public static IServiceCollection AddEmailService(this IServiceCollection services)
     {
-        services.AddSingleton<IEmailService, LoggingEmailService>();
+        var connectionString = Environment.GetEnvironmentVariable("ACS__ConnectionString");
+        var senderAddress = Environment.GetEnvironmentVariable("ACS__SenderAddress");
+
+        if (!string.IsNullOrWhiteSpace(connectionString) && !string.IsNullOrWhiteSpace(senderAddress))
+        {
+            services.AddSingleton<IEmailService>(sp =>
+            {
+                var logger = sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<AzureCommunicationEmailService>>();
+                return new AzureCommunicationEmailService(connectionString, senderAddress, logger);
+            });
+        }
+        else
+        {
+            services.AddSingleton<IEmailService, LoggingEmailService>();
+        }
+
         return services;
     }
 }
